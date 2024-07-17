@@ -14,7 +14,8 @@ export const idToString = id => {
 
 // https://www.geeksforgeeks.org/how-to-check-if-a-string-is-valid-mongodb-objectid-in-nodejs/
 export const isValidObjectIdString = string =>
-  ObjectId.isValid(string) && String(new ObjectId(string)) === string
+  ObjectId.isValid(string) &&
+  String(ObjectId.createFromHexString(string)) === string
 
 export const stringToId = string => {
   if (string instanceof ObjectId) {
@@ -22,7 +23,7 @@ export const stringToId = string => {
   }
 
   if (isValidObjectIdString(string)) {
-    return new ObjectId(string)
+    return ObjectId.createFromHexString(string)
   }
 
   return string
