@@ -12,9 +12,12 @@ export const idToString = id => {
   }
 }
 
+const isHexString = string => /^[0-9a-fA-F]{24}$/.test(string)
+
 // https://www.geeksforgeeks.org/how-to-check-if-a-string-is-valid-mongodb-objectid-in-nodejs/
 export const isValidObjectIdString = string =>
   ObjectId.isValid(string) &&
+  isHexString(string) &&
   String(ObjectId.createFromHexString(string)) === string
 
 export const stringToId = string => {
