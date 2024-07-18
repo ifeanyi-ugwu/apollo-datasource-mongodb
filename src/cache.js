@@ -160,7 +160,11 @@ export const createCachingMethods = ({ collection, model, cache }) => {
       const cacheDoc = await cache.get(cacheKey)
       log('findOneById found in cache:', cacheDoc)
       if (cacheDoc) {
-        return EJSON.parse(cacheDoc)
+        const parsedDoc = EJSON.parse(cacheDoc)
+        if (model) {
+          return model.hydrate(parsedDoc)
+        }
+        return parsedDoc
       }
 
       log(`Dataloader.load: ${EJSON.stringify({ _id })}`)
@@ -168,7 +172,13 @@ export const createCachingMethods = ({ collection, model, cache }) => {
       log('Dataloader.load returned: ', docs)
       if (Number.isInteger(ttl)) {
         // https://github.com/apollographql/apollo-server/tree/master/packages/apollo-server-caching#apollo-server-caching
-        cache.set(cacheKey, EJSON.stringify(docs[0]), { ttl })
+        cache.set(
+          cacheKey,
+          model
+            ? EJSON.stringify(docs[0].toObject())
+            : EJSON.stringify(docs[0]),
+          { ttl }
+        )
       }
 
       return docs[0]
@@ -182,7 +192,11 @@ export const createCachingMethods = ({ collection, model, cache }) => {
 
       const cacheDoc = await cache.get(cacheKey)
       if (cacheDoc) {
-        return EJSON.parse(cacheDoc)
+        const parsedDoc = EJSON.parse(cacheDoc)
+        if (model) {
+          return parsedDoc.map(doc => model.hydrate(doc))
+        }
+        return parsedDoc
       }
 
       const fieldNames = Object.keys(cleanedFields)
@@ -205,7 +219,13 @@ export const createCachingMethods = ({ collection, model, cache }) => {
 
       if (Number.isInteger(ttl)) {
         // https://github.com/apollographql/apollo-server/tree/master/packages/apollo-server-caching#apollo-server-caching
-        cache.set(cacheKey, EJSON.stringify(docs), { ttl })
+        cache.set(
+          cacheKey,
+          model
+            ? EJSON.stringify(docs.map(doc => doc.toObject()))
+            : EJSON.stringify(docs),
+          { ttl }
+        )
       }
 
       return docs
