@@ -10,6 +10,7 @@
     "test": "jest --watch",
     "ci": "jest --ci",
     "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "format": "prettier --write **/*.js",
     "release": "release patch && echo 'A Github Action will now publish to NPM! 🚀'"
   },
