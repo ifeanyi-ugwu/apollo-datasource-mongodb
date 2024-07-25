@@ -170,6 +170,7 @@ export const createCachingMethods = ({ collection, model, cache }) => {
       log(`Dataloader.load: ${EJSON.stringify({ _id })}`)
       const docs = await loader.load(EJSON.stringify({ _id }))
       log('Dataloader.load returned: ', docs)
+      if (!docs || !docs[0]) return null
       if (Number.isInteger(ttl)) {
         // https://github.com/apollographql/apollo-server/tree/master/packages/apollo-server-caching#apollo-server-caching
         cache.set(
