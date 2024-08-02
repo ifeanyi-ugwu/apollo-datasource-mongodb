@@ -176,7 +176,7 @@ export const createCachingMethods = ({ collection, model, cache }) => {
         cache.set(
           cacheKey,
           model
-            ? EJSON.stringify(docs[0].toObject())
+            ? EJSON.stringify(docs[0]?.toObject())
             : EJSON.stringify(docs[0]),
           { ttl }
         )
